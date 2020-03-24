@@ -1,0 +1,25 @@
+@import '~@/theme/var';
+
+@pro-header-hover-bg: rgba(0, 0, 0, 0.025);
+
+.layout-header-right {
+  float: right;
+  height: 100%;
+  margin-left: auto;
+  padding-right: 8px;
+  overflow: hidden;
+  .action {
+    display: inline-block;
+    height: 100%;
+    padding: 0 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    > i {
+      color: @text-color;
+      vertical-align: middle;
+    }
+    &:hover {
+      background: @pro-header-hover-bg;
+    }
+  }
+}
