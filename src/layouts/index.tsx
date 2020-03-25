@@ -1,8 +1,17 @@
-import React, { PropsWithChildren } from 'react'
-import ProLayout from '@ant-design/pro-layout'
+import React from 'react'
+import ProLayout, { MenuDataItem } from '@ant-design/pro-layout'
 import AvatarDropdown from '@/components/global/LayoutHeaderRight'
+import { Link } from 'umi'
 
-export default (props: PropsWithChildren<any>) => {
+export default props => {
+
+  function menuDataRender(): MenuDataItem[] {
+    return [
+      { name: 'Example', path: '/example' },
+      { name: 'Example2', path: '/example2' }
+    ]
+  }
+
   return (
     <ProLayout
       title={'Ant Design'}
@@ -12,6 +21,13 @@ export default (props: PropsWithChildren<any>) => {
         height: '100vh',
       }}
       rightContentRender={() => <AvatarDropdown />}
+      menuDataRender={menuDataRender}
+      menuItemRender={(menuItemProps, defaultDom) => {
+        // if (menuItemProps.isUrl || menuItemProps.children) {
+        //   return defaultDom
+        // }
+        return <Link to={menuItemProps.path as string}>{defaultDom}</Link>
+      }}
     >
       {props.children}
     </ProLayout>
