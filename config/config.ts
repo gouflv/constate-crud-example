@@ -8,8 +8,8 @@ export default defineConfig({
       component: '@/layouts/index',
       routes: [
         { path: '/example', component: '@/pages/example' },
-        { path: '', component: '@/pages/index' },
-      ],
-    },
-  ],
+        { path: '', component: '@/pages/index' }
+      ]
+    }
+  ]
 })

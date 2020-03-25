@@ -3,7 +3,7 @@ import axios, {
   AxiosError,
   AxiosRequestConfig,
   AxiosResponse,
-  Method,
+  Method
 } from 'axios'
 import { history } from 'umi'
 
@@ -32,10 +32,10 @@ export const ajax = (url: string, options: ajaxOptions) => {
     baseURL: options.baseURL || API_BASE,
     headers: {
       token: localStorage.getItem('token'),
-      ...options.headers,
+      ...options.headers
     },
     method: options.method || 'GET',
-    timeout: options.timeout || 10 * 1000,
+    timeout: options.timeout || 10 * 1000
   }
   if (options.data && ~['get', 'delete'].indexOf(options.method as string)) {
     axiosOptions.params = options.data
@@ -59,7 +59,7 @@ export const ajax = (url: string, options: ajaxOptions) => {
           reject({
             data: err.response.data,
             message: err.response.data && err.response.data.msg,
-            handled: false,
+            handled: false
           })
         } else {
           serverErrorHandler()
@@ -72,22 +72,22 @@ export const ajax = (url: string, options: ajaxOptions) => {
 export const GET = (url: string, options: ajaxOptions) =>
   ajax(url, {
     ...options,
-    method: 'get',
+    method: 'get'
   })
 export const PUT = (url: string, options: ajaxOptions) =>
   ajax(url, {
     ...options,
-    method: 'put',
+    method: 'put'
   })
 export const POST = (url: string, options: ajaxOptions) =>
   ajax(url, {
     ...options,
-    method: 'post',
+    method: 'post'
   })
 export const DELETE = (url: string, options: ajaxOptions) =>
   ajax(url, {
     ...options,
-    method: 'delete',
+    method: 'delete'
   })
 
 const serverErrorHandler = () => {

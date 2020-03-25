@@ -19,9 +19,9 @@ export default function StandardTable(props: StandardTableProps) {
         title: '#',
         key: 'index',
         render: (text, row, index) => list.indexMethod(index),
-        width: '6em',
+        width: '6em'
       },
-      ...(columns as any),
+      ...(columns as any)
     ]
   }
 
@@ -32,7 +32,7 @@ export default function StandardTable(props: StandardTableProps) {
     showQuickJumper: true,
     hideOnSinglePage: true,
     showTotal: total => `共${total}条`,
-    onChange: page => list.onIndexChange(page),
+    onChange: page => list.onIndexChange(page)
   }
 
   return (

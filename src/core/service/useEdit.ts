@@ -15,7 +15,7 @@ export interface UseEditOptions<T, P> {
   removeOptions: {
     url: (params: P) => string
     data?: (params: P) => any
-  },
+  }
   requestListReload?: () => void
 }
 
@@ -34,9 +34,10 @@ export interface EditContext<T, P> {
   onRemove: (data) => void
 }
 
-export default function createEdit<FormDataType = any, ParamsType = FormDataType>(
-  options: UseEditOptions<FormDataType, ParamsType>
-) {
+export default function createEdit<
+  FormDataType = any,
+  ParamsType = FormDataType
+>(options: UseEditOptions<FormDataType, ParamsType>) {
   function hook(): EditContext<FormDataType, ParamsType> {
     const [visible, setVisible] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
@@ -66,16 +67,17 @@ export default function createEdit<FormDataType = any, ParamsType = FormDataType
             options.fetchOptions.url(params),
             options.fetchOptions.data && options.fetchOptions.data(params)
           )
-          setData(options.fetchOptions.parser
-            ? options.fetchOptions.parser(data)
-            : data)
+          setData(
+            options.fetchOptions.parser
+              ? options.fetchOptions.parser(data)
+              : data
+          )
         } catch (e) {
           console.log(e)
           //TODO errorHandler
         } finally {
           setLoading(false)
         }
-
       } else {
         setData(params)
         setVisible(true)
@@ -98,7 +100,6 @@ export default function createEdit<FormDataType = any, ParamsType = FormDataType
 
         setVisible(false)
         options.requestListReload && options.requestListReload()
-
       } catch (e) {
         console.log(e)
         // TODO errorHandler
@@ -145,6 +146,4 @@ export default function createEdit<FormDataType = any, ParamsType = FormDataType
       onRemove
     }
   }
-
-
 }

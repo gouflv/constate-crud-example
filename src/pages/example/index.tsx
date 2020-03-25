@@ -7,8 +7,7 @@ import TableToolbar from '@/components/TableToolbar'
 import Search from '@/components/Search'
 
 const { ListProvider, useListContext } = createList({
-  url: () => '/list2',
-
+  url: () => '/list2'
 })
 
 export default function() {
@@ -52,8 +51,8 @@ const List: FC = () => {
                 <Divider type={'vertical'} />
                 <a className={'mute'}>删除</a>
               </span>
-            ),
-          },
+            )
+          }
         ]}
       />
     </Card>

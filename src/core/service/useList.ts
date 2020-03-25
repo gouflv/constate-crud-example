@@ -6,7 +6,7 @@ import { useUpdateEffect } from '@umijs/hooks'
 export interface UseListOptions {
   url: () => string
   getDefaultSearch?: () => Record<string, any>
-  parseFetchedData?: (data) => { items: any[], total: number }
+  parseFetchedData?: (data) => { items: any[]; total: number }
 }
 
 export interface ListContext<T = any> {
@@ -33,7 +33,7 @@ export default function createList<T = any, S = any>(options: UseListOptions) {
     const [loading, setLoading] = useState(true)
 
     const [search, setSearch] = useState(
-      options.getDefaultSearch ? options.getDefaultSearch() : {},
+      options.getDefaultSearch ? options.getDefaultSearch() : {}
     )
 
     async function fetch() {
@@ -44,8 +44,8 @@ export default function createList<T = any, S = any>(options: UseListOptions) {
           data: {
             pageIndex: index - 1,
             pageSize: size,
-            ...search,
-          },
+            ...search
+          }
         })
 
         const { items, total } = parseFetchedData(data)
@@ -94,13 +94,13 @@ export default function createList<T = any, S = any>(options: UseListOptions) {
       onSearchReset: () => {
         setSearch(options.getDefaultSearch ? options.getDefaultSearch() : {})
       },
-      indexMethod: current => current + 1 + (index - 1) * size,
+      indexMethod: current => current + 1 + (index - 1) * size
     }
   }
 
   const [ListProvider, useListContext] = constate(hook)
   return {
     ListProvider,
-    useListContext,
+    useListContext
   }
 }

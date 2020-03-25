@@ -4,7 +4,6 @@ import AvatarDropdown from '@/components/global/LayoutHeaderRight'
 import { Link } from 'umi'
 
 export default props => {
-
   function menuDataRender(): MenuDataItem[] {
     return [
       { name: 'Example', path: '/example' },
@@ -18,7 +17,7 @@ export default props => {
       logo={() => <img src={require('@/assets/logo.png')} alt='' />}
       loading={false}
       style={{
-        height: '100vh',
+        height: '100vh'
       }}
       rightContentRender={() => <AvatarDropdown />}
       menuDataRender={menuDataRender}
