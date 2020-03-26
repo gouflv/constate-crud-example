@@ -2,24 +2,42 @@ import React, { FC } from 'react'
 import createList from '@/core/service/useList'
 import { useMount } from '@umijs/hooks'
 import { Button, Card, Divider, Form, Input } from 'antd'
-import StandardTable from '@/components/StandardTable'
+import Table from '@/components/Table'
 import TableToolbar from '@/components/TableToolbar'
 import Search from '@/components/Search'
+import createEdit from '@/core/service/useEdit'
+import combineProviders from '@/utils/warpWithProvider'
+import Edit from '@/components/Edit'
+import RemoveConfirm from '@/components/Table/RemoveComfirm'
 
 const { ListProvider, useListContext } = createList({
-  url: () => '/list2'
+  url: () => '/list'
+})
+
+const { EditProvider, useEditContext } = createEdit({
+  fetchOptions: {
+    url: '/item'
+  },
+  submitOptions: {
+    url: '/item'
+  },
+  removeOptions: {
+    url: '/item'
+  }
 })
 
 export default function() {
+  const Providers = combineProviders([ListProvider, EditProvider])
   return (
-    <ListProvider>
-      <List />
-    </ListProvider>
+    <Providers>
+      <Page />
+    </Providers>
   )
 }
 
-const List: FC = () => {
+const Page: FC = () => {
   const list = useListContext()
+  const edit = useEditContext()
 
   useMount(() => {
     list.fetch()
@@ -31,13 +49,18 @@ const List: FC = () => {
         <Form.Item label={'用户名'} name={'name'}>
           <Input allowClear />
         </Form.Item>
+        <Form.Item label={'用户名'} name={'name2'}>
+          <Input allowClear />
+        </Form.Item>
       </Search>
 
-      <TableToolbar>
-        <Button type={'primary'}>新增</Button>
+      <TableToolbar rightContent={() => <Button>更多</Button>}>
+        <Button type={'primary'} onClick={() => edit.onAdd()}>
+          新增
+        </Button>
       </TableToolbar>
 
-      <StandardTable
+      <Table
         list={list}
         columns={[
           { title: 'Name', dataIndex: 'name' },
@@ -47,14 +70,20 @@ const List: FC = () => {
             key: 'actions',
             render: (t, r) => (
               <span>
-                <a>编辑</a>
+                <a onClick={() => edit.onEdit(r)}>编辑</a>
                 <Divider type={'vertical'} />
-                <a className={'mute'}>删除</a>
+                <RemoveConfirm edit={edit} data={r} />
               </span>
             )
           }
         ]}
       />
+
+      <Edit edit={edit}>
+        <Form.Item label={'用户名'} name={'name'} required>
+          <Input />
+        </Form.Item>
+      </Edit>
     </Card>
   )
 }

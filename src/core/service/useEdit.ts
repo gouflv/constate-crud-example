@@ -1,19 +1,22 @@
 import { useState } from 'react'
-import { DELETE, GET, PUT, POST } from '@/core/request'
+import { DELETE, GET, POST, PUT } from '@/core/request'
+import constate from 'constate'
+
+type ValueOrValueFunction<P, V> = V | ((params: P) => V)
 
 export interface UseEditOptions<T, P> {
-  getDefaultFormData: (params) => any
+  getDefaultFormData?: (params) => any
   fetchOptions?: {
-    url: (params: P) => string
-    data?: (params: P) => any
+    url: ValueOrValueFunction<P, string>
+    data?: ValueOrValueFunction<P, any>
     parser?: (data) => T
   }
-  submitOptions: {
-    url: (isEdit: boolean, data: T, params: P) => string
+  submitOptions?: {
+    url: ValueOrValueFunction<{ isEdit: boolean; data: T; params: P }, string>
     parser?: (data: T) => any
   }
-  removeOptions: {
-    url: (params: P) => string
+  removeOptions?: {
+    url: ValueOrValueFunction<P, string>
     data?: (params: P) => any
   }
   requestListReload?: () => void
@@ -37,7 +40,7 @@ export interface EditContext<T, P> {
 export default function createEdit<
   FormDataType = any,
   ParamsType = FormDataType
->(options: UseEditOptions<FormDataType, ParamsType>) {
+>(options: Readonly<UseEditOptions<FormDataType, ParamsType>>) {
   function hook(): EditContext<FormDataType, ParamsType> {
     const [visible, setVisible] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
@@ -48,9 +51,9 @@ export default function createEdit<
 
     function onAdd(params?) {
       setParams(params)
-      if (options.getDefaultFormData) {
-        setData(options.getDefaultFormData(params))
-      }
+      setData(
+        options.getDefaultFormData ? options.getDefaultFormData(params) : {}
+      )
       setIsEdit(false)
       setVisible(true)
     }
@@ -64,7 +67,7 @@ export default function createEdit<
         setLoading(true)
         try {
           const { data } = await GET(
-            options.fetchOptions.url(params),
+            getFunctionalValue(options.fetchOptions.url, params),
             options.fetchOptions.data && options.fetchOptions.data(params)
           )
           setData(
@@ -85,12 +88,21 @@ export default function createEdit<
     }
 
     async function onSubmit(data) {
+      if (!options.submitOptions) {
+        console.error('[useEdit] options.submitOptions undefined')
+        return
+      }
+
       setData(prevState => ({ ...prevState, ...data }))
       setSaving(true)
 
       try {
         const ajax = isEdit ? PUT : POST
-        const url = options.submitOptions.url(isEdit, data, params)
+        const url = getFunctionalValue(options.submitOptions.url, {
+          isEdit,
+          data,
+          params
+        })
         const remoteData = options.submitOptions.parser
           ? options.submitOptions.parser(data)
           : data
@@ -114,21 +126,24 @@ export default function createEdit<
     }
 
     async function onRemove(data) {
-      // TODO show confirm
+      if (!options.removeOptions) {
+        console.error('[useEdit] options.submitOptions undefined')
+        return
+      }
       try {
-        // set confirm loading
         await DELETE(
-          options.removeOptions.url(params),
-          options.removeOptions.data && options.removeOptions.data(params)
+          getFunctionalValue(options.removeOptions.url, data),
+          options.removeOptions.data && options.removeOptions.data(data)
         )
         options.requestListReload && options.requestListReload()
-        //TODO close confirm
       } catch (e) {
         console.log(e)
         //TODO errorHandler
-      } finally {
-        //TODO
       }
+    }
+
+    function getFunctionalValue(val, params) {
+      return typeof val === 'function' ? val(params) : val
     }
 
     return {
@@ -145,5 +160,11 @@ export default function createEdit<
       onCancel,
       onRemove
     }
+  }
+
+  const [EditProvider, useEditContext] = constate(hook)
+  return {
+    EditProvider,
+    useEditContext
   }
 }

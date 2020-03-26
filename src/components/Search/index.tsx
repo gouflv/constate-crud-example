@@ -1,13 +1,13 @@
 import './index.less'
-import React, { PropsWithChildren } from 'react'
+import React, { FC } from 'react'
 import { ListContext } from '@/core/service/useList'
 import { Button, Form } from 'antd'
 
-type SearchProps = PropsWithChildren<{
+interface SearchProps {
   list: ListContext
-}>
+}
 
-export default function Search(props: SearchProps) {
+const Search: FC<SearchProps> = props => {
   const [form] = Form.useForm()
 
   function onReset() {
@@ -35,3 +35,5 @@ export default function Search(props: SearchProps) {
     </Form>
   )
 }
+
+export default Search

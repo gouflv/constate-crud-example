@@ -3,10 +3,10 @@ import constate from 'constate'
 import { GET } from '@/core/request'
 import { useUpdateEffect } from '@umijs/hooks'
 
-export interface UseListOptions {
-  url: () => string
-  getDefaultSearch?: () => Record<string, any>
-  parseFetchedData?: (data) => { items: any[]; total: number }
+export interface UseListOptions<T, S> {
+  url: string | ((search: S) => string)
+  getDefaultSearch?: () => S
+  parseFetchedData?: (data) => { items: T[]; total: number }
 }
 
 export interface ListContext<T = any> {
@@ -24,7 +24,9 @@ export interface ListContext<T = any> {
   indexMethod: (current: number) => number
 }
 
-export default function createList<T = any, S = any>(options: UseListOptions) {
+export default function createList<T = any, S = any>(
+  options: Readonly<UseListOptions<T, S>>
+) {
   function hook(): ListContext<T> {
     const [index, setIndex] = useState(1)
     const [size] = useState(20)
@@ -32,15 +34,17 @@ export default function createList<T = any, S = any>(options: UseListOptions) {
     const [items, setItems] = useState<T[]>([])
     const [loading, setLoading] = useState(true)
 
-    const [search, setSearch] = useState(
-      options.getDefaultSearch ? options.getDefaultSearch() : {}
+    const [search, setSearch] = useState<S>(
+      options.getDefaultSearch ? options.getDefaultSearch() : ({} as S)
     )
 
     async function fetch() {
       setLoading(true)
       setItems([])
       try {
-        const { data } = await GET(options.url(), {
+        const url =
+          typeof options.url === 'function' ? options.url(search) : options.url
+        const { data } = await GET(url, {
           data: {
             pageIndex: index - 1,
             pageSize: size,
@@ -92,7 +96,9 @@ export default function createList<T = any, S = any>(options: UseListOptions) {
         setSearch(prevState => ({ ...prevState, ...search }))
       },
       onSearchReset: () => {
-        setSearch(options.getDefaultSearch ? options.getDefaultSearch() : {})
+        setSearch(
+          options.getDefaultSearch ? options.getDefaultSearch() : ({} as S)
+        )
       },
       indexMethod: current => current + 1 + (index - 1) * size
     }
