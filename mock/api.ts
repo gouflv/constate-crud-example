@@ -25,7 +25,8 @@ export default {
   'GET /api/item': mock.mock(
     wrapper({
       'id|1-20': 1,
-      name: '@first'
+      name: '@first',
+      'group|3': [{ name: '@last', 'type|+1': 11 }]
     })
   )
 }

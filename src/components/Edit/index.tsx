@@ -5,12 +5,16 @@ import { Form, Modal, Spin } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { FormInstance } from 'antd/es/form/util'
 import { FormProps } from 'antd/lib/form'
+import { FormLayoutPros } from '@/components/Edit/utils'
+
+export const DefaultLabelCol = 4
+export const DefaultWrapperCol = 24 - DefaultLabelCol - 2
 
 export type EditProps = {
   edit: EditContext<any, any>
+  form?: FormInstance
   modalProps?: ModalProps
   formProps?: FormProps
-  form?: FormInstance
 }
 
 const EditModel: FC<EditProps> = props => {
@@ -36,27 +40,29 @@ const EditModel: FC<EditProps> = props => {
       {...modalProps}
     >
       <Spin spinning={edit.loading} delay={200}>
-        {!props.edit.loading && <EditForm form={form} {...props} />}
+        <EditForm form={form} {...props} />
       </Spin>
     </Modal>
   )
 }
 
 const EditForm: FC<EditProps> = props => {
-  const formLayout: Pick<FormProps, 'labelCol' | 'wrapperCol'> = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 18 }
+  const formLayout: FormLayoutPros = {
+    labelCol: { span: DefaultLabelCol },
+    wrapperCol: { span: DefaultWrapperCol }
   }
 
   useEffect(() => {
-    props.form && props.form.setFieldsValue(props.edit.data)
-  }, [props.edit.data])
+    if (props.form && props.edit.visible) {
+      props.form.resetFields()
+      props.form.setFieldsValue(props.edit.data)
+    }
+  }, [props.edit.data, props.edit.visible])
 
   return (
     <Form
       {...formLayout}
       form={props.form}
-      initialValues={props.edit.data}
       className={'edit-form'}
       {...props.formProps}
     >
