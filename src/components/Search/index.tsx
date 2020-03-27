@@ -7,7 +7,7 @@ interface SearchProps {
   list: ListContext
 }
 
-const Search: FC<SearchProps> = props => {
+export const Search: FC<SearchProps> = props => {
   const [form] = Form.useForm()
 
   function onReset() {
@@ -35,5 +35,3 @@ const Search: FC<SearchProps> = props => {
     </Form>
   )
 }
-
-export default Search

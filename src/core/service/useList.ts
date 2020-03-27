@@ -17,14 +17,14 @@ export interface ListContext<T = any> {
   loading: boolean
   search: Record<string, any>
 
-  fetch: (data?: Record<string, any>) => Promise<any>
+  fetch: (options?: { reset: boolean }) => Promise<any>
   onIndexChange: (current: number) => void
   onSearchSubmit: (search: Record<string, string | number>) => void
   onSearchReset: () => void
   indexMethod: (current: number) => number
 }
 
-export default function createList<T = any, S = any>(
+export function createList<T = any, S = any>(
   options: Readonly<UseListOptions<T, S>>
 ) {
   function hook(): ListContext<T> {
@@ -105,6 +105,7 @@ export default function createList<T = any, S = any>(
   }
 
   const [ListProvider, useListContext] = constate(hook)
+  ListProvider.displayName = 'ListProvider'
   return {
     ListProvider,
     useListContext

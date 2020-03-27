@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { DELETE, GET, POST, PUT } from '@/core/request'
 import constate from 'constate'
+import { ListContext } from '@/core/service/useList'
+import { message } from 'antd'
 
 type ValueOrValueFunction<P, V> = V | ((params: P) => V)
 
@@ -19,7 +21,6 @@ export interface UseEditOptions<T, P> {
     url: ValueOrValueFunction<P, string>
     data?: (params: P) => any
   }
-  requestListReload?: () => void
 }
 
 export interface EditContext<T, P> {
@@ -35,12 +36,13 @@ export interface EditContext<T, P> {
   onSubmit: (data: T) => void
   onCancel: () => void
   onRemove: (data) => void
+
+  connect: (list: ListContext) => void
 }
 
-export default function createEdit<
-  FormDataType = any,
-  ParamsType = FormDataType
->(options: Readonly<UseEditOptions<FormDataType, ParamsType>>) {
+export function createEdit<FormDataType = any, ParamsType = FormDataType>(
+  options: Readonly<UseEditOptions<FormDataType, ParamsType>>
+) {
   function hook(): EditContext<FormDataType, ParamsType> {
     const [visible, setVisible] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
@@ -111,7 +113,8 @@ export default function createEdit<
         })
 
         setVisible(false)
-        options.requestListReload && options.requestListReload()
+        message.success('保存成功')
+        requestListReload({ reset: true })
       } catch (e) {
         console.log(e)
         // TODO errorHandler
@@ -135,7 +138,8 @@ export default function createEdit<
           getFunctionalValue(options.removeOptions.url, data),
           options.removeOptions.data && options.removeOptions.data(data)
         )
-        options.requestListReload && options.requestListReload()
+        requestListReload()
+        message.success('删除成功')
       } catch (e) {
         console.log(e)
         //TODO errorHandler
@@ -144,6 +148,17 @@ export default function createEdit<
 
     function getFunctionalValue(val, params) {
       return typeof val === 'function' ? val(params) : val
+    }
+
+    // inject listContext
+    const listRef = useRef<ListContext>()
+
+    function connect(list: ListContext) {
+      listRef.current = list
+    }
+
+    function requestListReload(options?: { reset: boolean }) {
+      listRef.current && listRef.current.fetch(options)
     }
 
     return {
@@ -158,11 +173,13 @@ export default function createEdit<
       onEdit,
       onSubmit,
       onCancel,
-      onRemove
+      onRemove,
+      connect
     }
   }
 
   const [EditProvider, useEditContext] = constate(hook)
+  EditProvider.displayName = 'EditProvider'
   return {
     EditProvider,
     useEditContext

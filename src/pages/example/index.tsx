@@ -1,14 +1,9 @@
 import React, { FC } from 'react'
-import createList from '@/core/service/useList'
+import { createList, createEdit, combineProviders } from '@/core/service'
 import { useMount } from '@umijs/hooks'
 import { Button, Card, Divider, Form, Input } from 'antd'
-import Table from '@/components/Table'
-import TableToolbar from '@/components/TableToolbar'
-import Search from '@/components/Search'
-import createEdit from '@/core/service/useEdit'
-import combineProviders from '@/utils/warpWithProvider'
-import Edit from '@/components/Edit'
-import RemoveConfirm from '@/components/Table/RemoveComfirm'
+import { BasicTable, RemoveConfirm, Search, TableToolbar } from '@/components'
+import { Edit } from '@/pages/example/Edit'
 
 const { ListProvider, useListContext } = createList({
   url: () => '/list'
@@ -26,8 +21,10 @@ const { EditProvider, useEditContext } = createEdit({
   }
 })
 
+export { useEditContext }
+
 export default function() {
-  const Providers = combineProviders([ListProvider, EditProvider])
+  const Providers = combineProviders(ListProvider, EditProvider)
   return (
     <Providers>
       <Page />
@@ -38,6 +35,7 @@ export default function() {
 const Page: FC = () => {
   const list = useListContext()
   const edit = useEditContext()
+  edit.connect(list)
 
   useMount(() => {
     list.fetch()
@@ -60,7 +58,7 @@ const Page: FC = () => {
         </Button>
       </TableToolbar>
 
-      <Table
+      <BasicTable
         list={list}
         columns={[
           { title: 'Name', dataIndex: 'name' },
@@ -79,11 +77,7 @@ const Page: FC = () => {
         ]}
       />
 
-      <Edit edit={edit}>
-        <Form.Item label={'用户名'} name={'name'} required>
-          <Input />
-        </Form.Item>
-      </Edit>
+      <Edit />
     </Card>
   )
 }

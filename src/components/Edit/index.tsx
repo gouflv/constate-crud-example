@@ -4,10 +4,12 @@ import { ModalProps } from 'antd/es/modal'
 import { Form, Modal, Spin } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { FormInstance } from 'antd/es/form/util'
+import { FormProps } from 'antd/lib/form'
 
 export type EditProps = {
   edit: EditContext<any, any>
   modalProps?: ModalProps
+  formProps?: FormProps
   form?: FormInstance
 }
 
@@ -41,23 +43,28 @@ const EditModel: FC<EditProps> = props => {
 }
 
 const EditForm: FC<EditProps> = props => {
+  const formLayout: Pick<FormProps, 'labelCol' | 'wrapperCol'> = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 18 }
+  }
+
   useEffect(() => {
     props.form && props.form.setFieldsValue(props.edit.data)
   }, [props.edit.data])
 
   return (
     <Form
+      {...formLayout}
       form={props.form}
       initialValues={props.edit.data}
       className={'edit-form'}
+      {...props.formProps}
     >
       {props.children}
     </Form>
   )
 }
 
-const Edit: FC<EditProps> = props => {
+export const BasicEdit: FC<EditProps> = props => {
   return <EditModel {...props} />
 }
-
-export default Edit

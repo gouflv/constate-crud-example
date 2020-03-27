@@ -1,16 +1,16 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Table } from 'antd'
 import { ListContext } from '@/core/service/useList'
 import { TableProps } from 'antd/es/table'
 import { PaginationProps } from 'antd/lib/pagination/Pagination'
 
-export interface StandardTableProps<T = any> extends TableProps<T> {
+export interface BasicTableProps<T = any> extends TableProps<T> {
   list: ListContext
   selectedRows?: T[]
   onSelectRow?: (row: any) => void
 }
 
-export default function StandardTable(props: StandardTableProps) {
+export const BasicTable: FC<BasicTableProps> = props => {
   const { list, columns, selectedRows, onSelectRow, ...tableProps } = props
 
   function getColumns() {

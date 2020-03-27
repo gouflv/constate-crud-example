@@ -1,7 +1,7 @@
 import './index.less'
 import React, { FC, ReactNode } from 'react'
 
-const TableToolbar: FC<{ rightContent?: () => ReactNode }> = props => {
+export const TableToolbar: FC<{ rightContent?: () => ReactNode }> = props => {
   return (
     <div className={'table-toolbar'}>
       <div className={'left'}>{props.children}</div>
@@ -11,5 +11,3 @@ const TableToolbar: FC<{ rightContent?: () => ReactNode }> = props => {
     </div>
   )
 }
-
-export default TableToolbar
