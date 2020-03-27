@@ -5,7 +5,7 @@ import { Form, Modal, Spin } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { FormInstance } from 'antd/es/form/util'
 import { FormProps } from 'antd/lib/form'
-import { FormLayoutPros } from '@/components/Edit/utils'
+import { FormLayoutPros } from '@/components/EditModel/utils'
 
 export const DefaultLabelCol = 4
 export const DefaultWrapperCol = 24 - DefaultLabelCol - 2
@@ -71,6 +71,4 @@ const EditForm: FC<EditProps> = props => {
   )
 }
 
-export const BasicEdit: FC<EditProps> = props => {
-  return <EditModel {...props} />
-}
+export { EditModel }

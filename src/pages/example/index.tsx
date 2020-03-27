@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { createList, createEdit, combineProviders } from '@/core/service'
 import { useMount } from '@umijs/hooks'
 import { Button, Card, Divider, Form, Input } from 'antd'
-import { BasicTable, RemoveConfirm, Search, TableToolbar } from '@/components'
+import { Table, RemoveConfirm, Search, TableToolbar } from '@/components'
 import { Edit } from '@/pages/example/Edit'
 
 const { ListProvider, useListContext } = createList({
@@ -58,7 +58,7 @@ const Page: FC = () => {
         </Button>
       </TableToolbar>
 
-      <BasicTable
+      <Table
         list={list}
         columns={[
           { title: 'Name', dataIndex: 'name' },

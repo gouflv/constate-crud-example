@@ -1,16 +1,16 @@
 import React, { FC } from 'react'
-import { Table } from 'antd'
+import { Table as ATable } from 'antd'
 import { ListContext } from '@/core/service/useList'
-import { TableProps } from 'antd/es/table'
+import { TableProps as ATableProps } from 'antd/es/table'
 import { PaginationProps } from 'antd/lib/pagination/Pagination'
 
-export interface BasicTableProps<T = any> extends TableProps<T> {
+export interface TableProps<T = any> extends ATableProps<T> {
   list: ListContext
   selectedRows?: T[]
   onSelectRow?: (row: any) => void
 }
 
-export const BasicTable: FC<BasicTableProps> = props => {
+export const Table: FC<TableProps> = props => {
   const { list, columns, selectedRows, onSelectRow, ...tableProps } = props
 
   function getColumns() {
@@ -36,7 +36,7 @@ export const BasicTable: FC<BasicTableProps> = props => {
   }
 
   return (
-    <Table
+    <ATable
       columns={getColumns()}
       rowKey={props.rowKey || 'id'}
       dataSource={list.items}

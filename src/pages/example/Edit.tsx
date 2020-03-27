@@ -1,10 +1,13 @@
 import React, { FC } from 'react'
 import { useEditContext } from '@/pages/example/index'
-import { BasicEdit, DefaultLabelCol, DefaultWrapperCol } from '@/components'
-import { Input, Select, Form, Button } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
-import { MinusCircleOutlined } from '@ant-design/icons/lib'
-import { FormLayoutPros, RequiredRule } from '@/components/Edit/utils'
+import {
+  DefaultLabelCol,
+  DefaultWrapperCol,
+  EditModel,
+  FormList
+} from '@/components'
+import { Button, Form, Input, Select } from 'antd'
+import { FormLayoutPros, RequiredRule } from '@/components/EditModel/utils'
 
 export const Edit: FC = () => {
   const edit = useEditContext()
@@ -15,7 +18,7 @@ export const Edit: FC = () => {
   }
 
   return (
-    <BasicEdit edit={edit} formProps={{}}>
+    <EditModel edit={edit}>
       <Form.Item label={'用户名'} name={'name'} rules={[RequiredRule]}>
         <Input />
       </Form.Item>
@@ -23,51 +26,46 @@ export const Edit: FC = () => {
         <Select />
       </Form.Item>
 
-      <Form.List name={'group'}>
-        {(fields, { add, remove, move }) => (
-          <div>
-            {fields.map((field, index) => (
-              <Form.Item
-                label={index === 0 && '对象组'}
-                key={index}
-                wrapperCol={{
-                  span: DefaultWrapperCol,
-                  offset: index === 0 ? 0 : DefaultLabelCol
-                }}
-              >
-                <Form.Item
-                  label={'名称'}
-                  name={[field.name, 'name']}
-                  fieldKey={[field.fieldKey, 'name'] as any}
-                  rules={[RequiredRule]}
-                  {...innerLayout}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label={'类型'}
-                  name={[field.name, 'type']}
-                  fieldKey={[field.fieldKey, 'type'] as any}
-                  rules={[RequiredRule]}
-                  {...innerLayout}
-                >
-                  <Input />
-                </Form.Item>
-                <a href='#' onClick={() => remove(field.name)}>
-                  删除
-                </a>
-              </Form.Item>
-            ))}
+      <FormList name={'group'}>
+        {(field, { index, isFirst, isLast }, { remove }) => (
+          <Form.Item
+            label={isFirst && '对象组'}
+            key={index}
+            wrapperCol={{
+              span: DefaultWrapperCol,
+              offset: isFirst ? 0 : DefaultLabelCol
+            }}
+          >
             <Form.Item
-              wrapperCol={{ offset: DefaultLabelCol, span: DefaultWrapperCol }}
+              label={'名称'}
+              name={[field.name, 'name']}
+              fieldKey={[field.fieldKey, 'name'] as any}
+              rules={[RequiredRule]}
+              {...innerLayout}
             >
-              <Button type={'dashed'} block onClick={() => add()}>
-                <PlusOutlined /> 新增
-              </Button>
+              <Input />
             </Form.Item>
-          </div>
+            <Form.Item
+              label={'类型'}
+              name={[field.name, 'type']}
+              fieldKey={[field.fieldKey, 'type'] as any}
+              rules={[RequiredRule]}
+              {...innerLayout}
+            >
+              <Input />
+            </Form.Item>
+            <div style={{ textAlign: 'right' }}>
+              <Button
+                type={'danger'}
+                size={'small'}
+                onClick={() => remove(field.name)}
+              >
+                删除
+              </Button>
+            </div>
+          </Form.Item>
         )}
-      </Form.List>
-    </BasicEdit>
+      </FormList>
+    </EditModel>
   )
 }
